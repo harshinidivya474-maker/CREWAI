@@ -5,6 +5,7 @@ from typing import Optional, List, Dict, Any
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field, HttpUrl
 from crewai import Agent, Task, Crew, LLM, Process
 from ddgs import DDGS
@@ -321,10 +322,9 @@ def agent10(data: ApprovalRequest):
     return {"project": "Approval Report Flow", "status": status, "draft_report": draft,
             "next_step": "Review the draft. To request changes, call /agent10 again with previous_draft and feedback. To mark it approved, submit approved=true."}
 
-@app.get("/", tags=["Health"])
+@app.get("/", include_in_schema=False)
 def home():
-    return {"message": "CREWAI API is running.", "docs": "/docs", "routes": [f"/agent{i}" for i in range(1, 11)]}
-
+    return RedirectResponse(url="/docs")
 @app.get("/health", tags=["Health"])
 def health():
     return {"status": "ok"}
